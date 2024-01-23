@@ -1,0 +1,17 @@
+{
+  "name": "vp-dls",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "vp-dls"
+  ],
+  "author": "beecoder77",
+  "license": "ISC",
+  "dependencies": {
+    "selenium-webdriver": "^4.17.0"
+  }
+}

@@ -3,7 +3,7 @@ vp-dls.com class check
 
 # Install
 ```bash
-npm i selenium-webdriver
+npm i selenium-webdriver axios
 ```
 
 # USAGE

@@ -25,12 +25,12 @@ const checkClass = async (username, password, className) => {
         try {
             const isLogin = await driver.findElement(webdriver.By.className('loginerrors mt-3')).isDisplayed();
             if (isLogin) {
-                console.error(`username ${username} tidak bisa login! password salah atau tidak terdaftar`);
+                console.error(`username ${username} can't login! wrong password or not registered`);
                 await driver.quit();
                 return {
                     success: false,
                     errorCode: 1,
-                    message: `username ${username} tidak bisa login! password salah atau tidak terdaftar`
+                    message: `username ${username} can't login! wrong password or not registered`
                 };
             }
         } catch (err) {
@@ -39,13 +39,49 @@ const checkClass = async (username, password, className) => {
         try {
             const isChangePass = await driver.findElement(webdriver.By.id('id_changepassword')).isDisplayed();
             if (isChangePass) {
-                console.error(`username ${username} harus mengganti password`);
-                await driver.quit();
-                return {
-                    success: false,
-                    errorCode: 2,
-                    message: `username ${username} harus mengganti password`
-                };
+                console.error(`username ${username} must change password`);
+                const passLength = password.length;
+                let newPass = password;
+                if (passLength < 6) {
+                    const diff = 6 - passLength;
+                    for (let i = 0; i < diff; i++) {
+                        newPass += '1';
+                    }
+                }
+                try {
+                    console.log(`try changing password ${password} to ${newPass}...`);
+                    await driver.findElement(webdriver.By.id('id_password')).sendKeys(password);
+                    await driver.findElement(webdriver.By.id('id_newpassword1')).sendKeys(newPass);
+                    await driver.findElement(webdriver.By.id('id_newpassword2')).sendKeys(newPass);
+                    await driver.findElement(webdriver.By.id('id_submitbutton')).click();
+                    try {
+                        const isFailed = await driver.findElement(webdriver.By.className('alert alert-danger alert-block fade in ')).isDisplayed();
+                        if (isFailed) {
+                            console.error(`failed to change password to ${newPass}! username ${username} must change tpassword manually!`);
+                            console.log('--------------------------------------------------');
+                            await driver.quit();
+                            return {
+                                success: false,
+                                errorCode: 2,
+                                message: `username ${username} must change password manually!`
+                            };
+                        }
+                    } catch (err) {
+                        // console.log('err: ', err);
+                    }
+                    await driver.wait(webdriver.until.elementLocated(webdriver.By.className('continuebutton')), 10000);
+                    console.log(`success changed password to ${newPass}`);
+                } catch (err) {
+                    console.error('failed change password! err: ', err);
+                    console.warn(`username ${username} must change password`);
+                    await driver.quit();
+                    return {
+                        success: false,
+                        errorCode: 2,
+                        message: `username ${username} must change password`
+                    };
+                }
+                await driver.get('https://vp-dls.com/my/');
             }
         } catch (err) {
             // console.log('err: ', err);
@@ -82,22 +118,22 @@ const checkClass = async (username, password, className) => {
             }
         }
         
-        console.log(`class yang dimiliki: ${classList}`)
+        console.log(`class list: ${classList}`)
         if(isClassFound){
-            console.log(`username ${username} mempunyai class ${className}`);
+            console.log(`username ${username} have class ${className}`);
             console.log('--------------------------------------------------');
             await driver.quit();
             return {
                 success: true,
-                message: `username ${username} mempunyai class ${className}`
+                message: `username ${username} have class ${className}`
             };
         } else {
-            console.warn(`username ${username} tidak mempunyai class ${className}`);
+            console.warn(`username ${username} doesnt have class ${className}`);
             console.log('--------------------------------------------------');
             await driver.quit();
             return {
                 success: true,
-                message: `username ${username} tidak mempunyai class ${className}`
+                message: `username ${username} doesnt have class ${className}`
             };
         }
     } catch (err) {

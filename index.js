@@ -1,15 +1,22 @@
 const checkClass = require('./checkClass');
 
-const data = [
-    {"username": "iniUsername", "password": "iniPassword"}
-  ];
+const memberClassList = [
+    {"username": "username", "password": "password"},
+  ]  
 
-const checkAllClass = async (data) => {
+const payload = {
+    data: memberClassList,
+    className: 'Pemograman Dasar'
+}
+
+const checkAllClass = async (data, className) => {
     for(const datas of data){
-        await checkClass(datas['username'], datas['password'], 'Programming by beecoder77');
+        await checkClass(datas['username'], datas['password'], className);
     }
 }
 
 (async () => {
-    await checkAllClass(data);
+    const data = payload.data;
+    const className = payload.className;
+    await checkAllClass(data, className);
 })();
